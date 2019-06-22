@@ -1,7 +1,10 @@
 from mongoengine import Document, EmbeddedDocument, fields
+from bson.objectid import ObjectId
 
 
 class Reply(EmbeddedDocument):
+    _id = fields.ObjectIdField(required=True, default=ObjectId,
+                               unique=True, primary_key=True)
     username = fields.StringField()
     answer = fields.StringField()
     timestamp = fields.DateTimeField()

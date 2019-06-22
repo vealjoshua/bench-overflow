@@ -4,6 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 from urllib.parse import unquote
 from json import loads
 from django.utils.timezone import now
+from bson.objectid import ObjectId
 
 
 def serializeQuestions(questions):
@@ -75,7 +76,7 @@ def loadQuestion(request):
             "timestamp": q.timestamp, "tags": q.tags, "client": q.client,
             "los": q.los, "description": q.description,
             "comments": [
-                {"username": r.username, "answer": r.answer,
+                {"id": str(r._id), "username": r.username, "answer": r.answer,
                  "timestamp": r.timestamp, "upvotes": r.upvotes,
                  "downvotes": r.downvotes}
                 for r in q.comments]}
@@ -165,5 +166,29 @@ def saveReply(request):
     reply.downvotes = 0
     question = Question.objects(id=body["questionid"]).first()
     question.comments.append(reply)
+    question.save()
+    return JsonResponse({"Result": "Success"}, status=204)
+
+
+@csrf_exempt
+def updateReply(request):
+    """
+    Take contents of a request body and updates values to MongoDB Question
+    Object's "comments" section
+
+    Input: request -> WSGIRequest
+
+    Returns: JsonResponse
+    """
+    body = parseBody(body=request.body)
+    question = Question.objects(id=body["questionid"]).first()
+    for reply in question.comments:
+        if(body["replyid"] == str(reply._id)):
+            if(body["answer"]):
+                reply.answer = body["answer"]
+            if(body["upvotes"]):
+                reply.upvotes += 1
+            if(body["downvotes"]):
+                reply.downvotes -= 1
     question.save()
     return JsonResponse({"Result": "Success"}, status=204)
