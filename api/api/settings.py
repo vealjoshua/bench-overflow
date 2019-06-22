@@ -81,7 +81,7 @@ DATABASES = {
         'NAME': '',
     }
 }
-mongoengine.connect(host="localhost", db="benchoverflow")
+mongoengine.connect(host=os.environ["BENCH_OVERFLOW_HOST"])
 
 
 # Password validation
