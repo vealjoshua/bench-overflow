@@ -25,5 +25,6 @@ urlpatterns = [
     url(r"^api/load/question$", views.loadQuestion),
     url(r"^api/load/user$", views.loadUser),
     url(r"^api/save/question$", views.saveQuestion),
+    url(r"^api/save/reply$", views.saveReply),
     url(r"^api/save/user$", views.saveUser)
 ]

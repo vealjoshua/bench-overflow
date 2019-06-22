@@ -145,3 +145,25 @@ def saveUser(request):
     user.save()
     return JsonResponse({"Result": "Success"}, status=204)
 
+
+@csrf_exempt
+def saveReply(request):
+    """
+    Take contents of a request body and save values to MongoDB Question
+    Object's "comments" section
+
+    Input: request -> WSGIRequest
+
+    Returns: JsonResponse
+    """
+    body = parseBody(body=request.body)
+    reply = Reply()
+    reply.username = body["username"]
+    reply.answer = body["answer"]
+    reply.timestamp = now
+    reply.upvotes = 0
+    reply.downvotes = 0
+    question = Question.objects(id=body["questionid"]).first()
+    question.comments.append(reply)
+    question.save()
+    return JsonResponse({"Result": "Success"}, status=204)
