@@ -21,5 +21,6 @@ from . import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     url(r"^api/load/recent$", views.loadRecent),
-    url(r"^api/load/all$", views.loadAll)
+    url(r"^api/load/all$", views.loadAll),
+    url(r"^api/save/question$", views.saveQuestion)
 ]
