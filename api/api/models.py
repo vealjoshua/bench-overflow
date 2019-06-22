@@ -18,3 +18,13 @@ class Question(Document):
     los = fields.StringField()
     comments = fields.EmbeddedDocumentListField(Reply)
     description = fields.StringField()
+
+
+class User(Document):
+    username = fields.StringField()
+    firstname = fields.StringField()
+    lastname = fields.StringField()
+    email = fields.StringField()
+    password = fields.StringField()
+    slackid = fields.StringField()
+    los = fields.StringField()

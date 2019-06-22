@@ -1,5 +1,5 @@
 from django.http import JsonResponse
-from api.models import Question, Reply
+from api.models import Question, Reply, User
 from django.views.decorators.csrf import csrf_exempt
 from urllib.parse import unquote
 from json import loads
@@ -83,6 +83,24 @@ def loadQuestion(request):
 
 
 @csrf_exempt
+def loadUser(request):
+    """
+    Takes in a username and returns the information about that User
+    object in JSON form
+
+    Input: request -> WSGIRequest
+
+    Returns: JsonResponse
+    """
+    body = parseBody(body=request.body)
+    u = User.objects(username=body["username"]).first()
+    data = {"id": str(u.id), "username": u.username, "firstname": u.firstname,
+            "lastname": u.lastname, "email": u.email, "password": u.password,
+            "slackid": u.slackid, "los": u.los}
+    return JsonResponse(data=data, status=204)
+
+
+@csrf_exempt
 def saveQuestion(request):
     """
     Take contents of a request body and save values to MongoDB as a new
@@ -103,3 +121,27 @@ def saveQuestion(request):
     question.description = body["description"]
     question.save()
     return JsonResponse({"Result": "Success"}, status=204)
+
+
+@csrf_exempt
+def saveUser(request):
+    """
+    Take contents of a request body and save values to MongoDB as a new
+    User object
+
+    Input: request -> WSGIRequest
+
+    Returns: JsonResponse
+    """
+    body = parseBody(body=request.body)
+    user = User()
+    user.username = body["username"]
+    user.firstname = body["firstname"]
+    user.lastname = body["lastname"]
+    user.email = body["email"]
+    user.password = body["password"]
+    user.slackid = body["slackid"]
+    user.los = body["los"]
+    user.save()
+    return JsonResponse({"Result": "Success"}, status=204)
+
