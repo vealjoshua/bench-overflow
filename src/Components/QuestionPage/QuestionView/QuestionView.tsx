@@ -14,6 +14,7 @@ const QuestionView: React.FunctionComponent<QuestionViewProps> = props => {
 
 	return (
 		<>
+			<div className="main-wrapper">
 			<div className='card'>
 				<div className='card-header'>{activeQuestion && activeQuestion.question}</div>
 				<div className='card-body'>
@@ -42,6 +43,7 @@ const QuestionView: React.FunctionComponent<QuestionViewProps> = props => {
 						</div>
 					</div>
 				</div>
+			</div>
 			</div>
 		</>
 	)
