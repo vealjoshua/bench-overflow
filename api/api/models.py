@@ -3,8 +3,7 @@ from bson.objectid import ObjectId
 
 
 class Reply(EmbeddedDocument):
-    _id = fields.ObjectIdField(required=True, default=ObjectId,
-                               unique=True, primary_key=True)
+    _id = fields.ObjectIdField(required=True, default=ObjectId, primary_key=True)
     username = fields.StringField()
     answer = fields.StringField()
     timestamp = fields.DateTimeField()
@@ -19,7 +18,7 @@ class Question(Document):
     tags = fields.ListField(fields.StringField())
     client = fields.StringField()
     los = fields.StringField()
-    comments = fields.EmbeddedDocumentListField(Reply)
+    comments = fields.EmbeddedDocumentListField(Reply, default=[], unique=False)
     description = fields.StringField()
 
 
