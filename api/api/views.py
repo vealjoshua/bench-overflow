@@ -18,7 +18,12 @@ def serializeQuestions(questions):
     """
     return [{"id": str(q.id), "question": q.question, "username": q.username,
              "timestamp": q.timestamp, "tags": q.tags, "client": q.client,
-             "los": q.los, "description": q.description} for q in questions]
+             "los": q.los, "description": q.description,
+             "comments": [
+                {"id": str(r._id), "username": r.username, "answer": r.answer,
+                 "timestamp": r.timestamp, "upvotes": r.upvotes,
+                 "downvotes": r.downvotes}
+                for r in q.comments]} for q in questions]
 
 
 def parseBody(body):
