@@ -1,6 +1,7 @@
 export interface Question {
 	id: string
 	question: string
+	description: string
 	username: string
 	tags: string[]
 	client: string

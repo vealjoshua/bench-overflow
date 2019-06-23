@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Button, Form, Table } from 'react-bootstrap'
+import { Button, Form, Table, Container, Row, Col } from 'react-bootstrap'
 import { connect } from 'react-redux'
 import { RootState } from '../../../Redux'
 import {
@@ -8,20 +8,36 @@ import {
 	FetchAllQuestionsAction
 } from '../../../Redux/Actions/homeActions'
 import { Question } from '../../../Redux/Types/Question'
+import { Redirect } from 'react-router'
+import { globalActions, SetRedirectAction } from '../../../Redux/Actions/globalActions'
+import { questionActions, SetActiveQuestionAction } from '../../../Redux/Actions/questionActions'
 
 export interface LoginProps {
 	isLoggedIn: boolean
 	allQuestions: Question[]
+	redirectTarget: string
 	setIsLoggedIn(isLoggedIn: boolean): SetIsLoggedInAction
 	fetchAllQuestions(): FetchAllQuestionsAction
+	setRedirect(redirectTarget: string): SetRedirectAction
+	setActiveQuestion(question: Question | null): SetActiveQuestionAction
 }
 
 const Login: React.FunctionComponent<LoginProps> = props => {
-	const { isLoggedIn, setIsLoggedIn, fetchAllQuestions, allQuestions } = props
+	const {
+		isLoggedIn,
+		setIsLoggedIn,
+		fetchAllQuestions,
+		allQuestions,
+		setRedirect,
+		redirectTarget,
+		setActiveQuestion
+	} = props
+
 	const formHandler = (e: any) => {
 		e.preventDefault()
 		setIsLoggedIn(true)
 		fetchAllQuestions()
+		// setRedirect('')
 	}
 
 	const LoginPrompt = (
@@ -42,16 +58,25 @@ const Login: React.FunctionComponent<LoginProps> = props => {
 		</Form>
 	)
 
-	const rowClickHandler = (e: any) => {
-		console.log(e)
+	const rowClickHandler = (e: any, questionId: string) => {
+		const activeQuestion: Question | null =
+			allQuestions.find((question: Question) => question.id === questionId) || null
+		setActiveQuestion(activeQuestion)
+
+		const route = `/question/${questionId}`
+		setRedirect(route)
 	}
 
 	if (isLoggedIn) {
+		if (redirectTarget) {
+			return <Redirect to={redirectTarget} />
+		}
+
 		return allQuestions ? (
-			<Table striped bordered hover>
+			<table className='table table-striped'>
 				<thead>
 					<tr>
-						<th id='username'>Username</th>
+						<th>Username</th>
 						<th>Question</th>
 						<th>Client</th>
 						<th>LOS</th>
@@ -61,7 +86,7 @@ const Login: React.FunctionComponent<LoginProps> = props => {
 
 				<tbody>
 					{allQuestions.map((question: Question) => (
-						<tr onClick={rowClickHandler} key={question.id}>
+						<tr onClick={(e: any) => rowClickHandler(e, question.id)} key={question.id}>
 							<td>{question.username}</td>
 							<td>{question.question}</td>
 							<td>{question.client}</td>
@@ -70,7 +95,7 @@ const Login: React.FunctionComponent<LoginProps> = props => {
 						</tr>
 					))}
 				</tbody>
-			</Table>
+			</table>
 		) : (
 			<h1>No questions yet</h1>
 		)
@@ -80,13 +105,16 @@ const Login: React.FunctionComponent<LoginProps> = props => {
 }
 
 const mapStateToProps = (state: RootState) => ({
-	isLoggedIn: state.homePage.isLoggedIn,
-	allQuestions: state.homePage.questions
+	isLoggedIn: state.home.isLoggedIn,
+	allQuestions: state.home.questions,
+	redirectTarget: state.global.redirectTarget
 })
 
 const mapDispatchToProps = {
 	setIsLoggedIn: homeActions.setIsLoggedIn,
-	fetchAllQuestions: homeActions.fetchAllQuestions
+	fetchAllQuestions: homeActions.fetchAllQuestions,
+	setRedirect: globalActions.setRedirect,
+	setActiveQuestion: questionActions.setActiveQuestionAction
 }
 
 export default connect(

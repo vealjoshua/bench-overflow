@@ -1,6 +1,6 @@
 import { call, put as dispatch, takeLatest } from 'redux-saga/effects'
 
-import { FetchAllQuestionsAction, homeActions } from '../Actions/homeActions'
+import { homeActions } from '../Actions/homeActions'
 import { get } from './Helpers/makeFetchCall'
 import { homeConstants } from '../Constants/homeConstants'
 
